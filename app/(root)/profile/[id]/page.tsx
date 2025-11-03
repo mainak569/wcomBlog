@@ -80,8 +80,9 @@ const page = async ({
             <div className="mt-5 flex flex-wrap items-center justify-start gap-5">
               <ProfileLink
                 imgUrl="/assets/icons/star.svg"
-                title={`${(user.points ?? (user._count.questions * 5 + user._count.answer * 10) ?? 0)} pts`}
+                title={`${user.points ?? ((user._count?.questions ?? 0) * 5 + (user._count?.answer ?? 0) * 10)} pts`}
               />
+
               {user.portfolioWebsite && (
                 <ProfileLink
                   href={user.portfolioWebsite}

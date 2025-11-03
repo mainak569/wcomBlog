@@ -8,6 +8,7 @@ import Tags from "@/constants/tags";
 interface TagProps {
   id: string;
   text: string;
+  className?: string;
 }
 const KeyCodes = {
   comma: 188,
@@ -18,6 +19,7 @@ const suggestions = Tags.map((tag) => {
   return {
     id: tag,
     text: tag,
+    className: "",
   };
 });
 
@@ -33,18 +35,26 @@ const TagInput = ({
   questionTags: TagProps[];
 }) => {
   const [tags, setTags] = useState<TagProps[]>(
-    questionTags ? questionTags : []
+    questionTags ? questionTags.map((t) => ({ ...t, className: t.className ?? "" })) : []
   );
 
   const handleDelete = (i: number) => {
+    if (disabled) return;
     setTags(tags.filter((tag, index) => index !== i));
   };
 
-  const handleAddition = (tag: TagProps) => {
-    setTags([...tags, tag]);
+  const handleAddition = (tag: any) => {
+    if (disabled) return;
+    const normalized: TagProps = {
+      id: tag.id,
+      text: tag.text ?? tag?.name ?? "",
+      className: tag.className ?? "",
+    };
+    setTags([...tags, normalized]);
   };
 
   const handleDrag = (tag: TagProp, currPos: number, newPos: number) => {
+    if (disabled) return;
     const newTags = tags.slice();
 
     newTags.splice(currPos, 1);
@@ -57,11 +67,11 @@ const TagInput = ({
   useEffect(() => {
     onChange(tags);
     // console.log(tags);
-  }, [tags]);
+  }, [tags, onChange]);
 
   return (
     <ReactTags
-      tags={tags}
+      tags={tags as any}
       suggestions={suggestions}
       delimiters={delimiters}
       handleDelete={handleDelete}
@@ -70,7 +80,6 @@ const TagInput = ({
       inputFieldPosition="bottom"
       autocomplete
       maxTags={8}
-      disabled={disabled}
       // {...field}
       // onBlur={field.onBlur} c
       classNames={{
