@@ -126,27 +126,48 @@ const AskEditQuestion = ({
               render={({ field }) => (
                 <FormItem className="flex w-full flex-col">
                   <FormLabel className="paragraph-semibold text-dark400_light800">
-                    Question Title *
+                    Question Body *
                   </FormLabel>
                   <FormControl className="mt-3.5">
-                    <Editor
-                      apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
-                      onBlur={field.onBlur}
-                      initialValue={field.value || "Welcome to StackOverflow!"}
-                      onEditorChange={(content) => field.onChange(content)}
-                      init={{
-                        plugins:
-                          "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount linkchecker",
-                        toolbar:
-                          "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat",
-                        content_style:
-                          "body { font-family:Inter; font-size:16px }",
-                        skin: resolvedTheme === "dark" ? "oxide-dark" : "oxide",
-                        content_css:
-                          resolvedTheme === "dark" ? "dark" : "light",
-                      }}
-                      disabled={isPending}
-                    />
+                    <div className="rounded-md border p-3 background-light900_dark300 light-border-2">
+                      <div dir="ltr" style={{ direction: "ltr", unicodeBidi: "normal", textAlign: "left" }}>
+                          <Editor
+                            apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
+                            onBlur={field.onBlur}
+                            value={field.value || ""}
+                            onEditorChange={(content) => field.onChange(content)}
+                            init={{
+                              directionality: "ltr",
+                              plugins:
+                                "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount linkchecker",
+                              toolbar:
+                                "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat",
+                              content_style:
+                                "body { font-family:Inter; font-size:16px; direction:ltr !important; text-align:left !important; unicode-bidi: normal !important; }",
+                              forced_root_block: "p",
+                              forced_root_block_attrs: { dir: "ltr" },
+                              body_class: "mce-content-body",
+                              body_attrs: { dir: "ltr" },
+                              setup: (editor) => {
+                                editor.on("init", () => {
+                                  const body = editor.getBody();
+                                  body.setAttribute("dir", "ltr");
+                                  body.style.direction = "ltr";
+                                  body.style.textAlign = "left";
+                                  // Placeholder
+                                  if (!editor.getContent()) {
+                                    editor.setContent("");
+                                  }
+                                });
+                              },
+                              skin: resolvedTheme === "dark" ? "oxide-dark" : "oxide",
+                              content_css:
+                                resolvedTheme === "dark" ? "dark" : "light",
+                            }}
+                            disabled={isPending}
+                          />
+                        </div>
+                      </div>
                   </FormControl>
                   <FormDescription className="body-regular mt-2.5 text-light-500">
                     Be specific and imagine you`&apos;`re asking a question to
@@ -163,7 +184,7 @@ const AskEditQuestion = ({
               render={({ field }) => (
                 <FormItem className="flex w-full flex-col">
                   <FormLabel className="paragraph-semibold text-dark400_light800">
-                    Question Title *
+                    Question Tags *
                   </FormLabel>
                   <FormControl className="mt-3.5">
                     <TagInput

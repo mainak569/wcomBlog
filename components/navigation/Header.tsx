@@ -12,8 +12,7 @@ const Header = () => {
         <Link href={"/"} className="flex items-center gap-1">
           <Image src="/favicon.ico" width={23} height={23} alt="Icon" />
           <p className="h2-bold font-spaceGrotesk text-dark-100 dark:text-light-900 max-sm:hidden">
-            Stack
-            <span className="text-myPrimary-500">Overflow</span>
+            Wcom<span className="text-myPrimary-500">Blog</span>
           </p>
         </Link>
       </div>

@@ -31,6 +31,7 @@ const page = async ({
     },
     include: {
       answer: true,
+      _count: { select: { answer: true, questions: true } },
     },
   });
 
@@ -77,6 +78,10 @@ const page = async ({
               @{user?.userName}
             </p>
             <div className="mt-5 flex flex-wrap items-center justify-start gap-5">
+              <ProfileLink
+                imgUrl="/assets/icons/star.svg"
+                title={`${(user.points ?? (user._count.questions * 5 + user._count.answer * 10) ?? 0)} pts`}
+              />
               {user.portfolioWebsite && (
                 <ProfileLink
                   href={user.portfolioWebsite}

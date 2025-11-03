@@ -14,6 +14,22 @@ export async function AskQuestion(values: z.infer<typeof QuestionsSchema>) {
   if (!user) return;
 
   try {
+    // Ensure the Clerk user exists in our database (webhook may not have populated locally)
+    const existing = await db.user.findUnique({ where: { userId: user.id } });
+    if (!existing) {
+      await db.user.create({
+        data: {
+          userId: user.id,
+          name: `${user.firstName ?? ""}${user.lastName ? ` ${user.lastName}` : ""}` || (user.username ?? user.id),
+          userName: user.username ?? user.id,
+          imageUrl: user.imageUrl ?? "",
+          email: user.emailAddresses?.[0]?.emailAddress ?? "",
+          bio: "",
+          portfolioWebsite: "",
+        },
+      });
+    }
+
     const question = await db.question.create({
       data: {
         title: values.title,
@@ -31,9 +47,17 @@ export async function AskQuestion(values: z.infer<typeof QuestionsSchema>) {
     await db.tag.createMany({
       data: tags,
     });
+    // award points for asking a question
+    await db.user.update({
+      where: { userId: user.id },
+      data: { points: { increment: 5 } },
+    });
+    // refresh profile page cache
+    revalidatePath(`/profile/${user.id}`);
     revalidatePath("/", "layout");
   } catch (error) {
     console.log(error);
+    throw error;
   }
 }
 

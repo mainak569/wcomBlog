@@ -2,7 +2,7 @@ import { user } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 
-const UserCard = async ({ user }: { user: user }) => {
+const UserCard = async ({ user }: { user: any }) => {
   return (
     <Link href={`/profile/${user.userId}`}>
       <article className="background-light900_dark200 border light-border flex w-full flex-col items-center justify-center rounded-2xl p-8">
@@ -19,6 +19,9 @@ const UserCard = async ({ user }: { user: user }) => {
           </h3>
           <p className="body-regular text-dark500_light500 mt-2">
             @{user.userName}
+          </p>
+          <p className="body-regular text-dark500_light500 mt-2">
+            {(user.points ?? user.computedPoints ?? 0)} pts
           </p>
         </div>
       </article>

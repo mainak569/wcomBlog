@@ -22,7 +22,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Stackoverlow",
+  title: "WcomBlog",
   description:
     "A community-driven platform for asking and answering programming questions. Get help, share knowledge, and collaborate with developers from around the world. Explore topics in web development, mobile app development, algorithms, data structures, and more.",
   icons: {
@@ -56,7 +56,7 @@ export default function RootLayout({
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
-            storageKey="stackoverflowTut"
+            storageKey="wcomblog"
             enableSystem
             disableTransitionOnChange
           >

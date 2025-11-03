@@ -76,6 +76,7 @@ const UserAnswer = ({ id }: { id: string }) => {
                     init={{
                       height: 350,
                       menubar: false,
+                      directionality: "ltr",
                       plugins: [
                         "advlist",
                         "autolink",
@@ -98,7 +99,19 @@ const UserAnswer = ({ id }: { id: string }) => {
                         "codesample | bold italic forecolor | alignleft aligncenter |" +
                         "alignright alignjustify | bullist numlist",
                       content_style:
-                        "body { font-family:Inter; font-size:16px }",
+                        "body { font-family:Inter; font-size:16px; direction:ltr !important; text-align:left !important; unicode-bidi: normal !important; }",
+                      forced_root_block: "p",
+                      forced_root_block_attrs: { dir: "ltr" },
+                      body_class: "mce-content-body",
+                      body_attrs: { dir: "ltr" },
+                      setup: (editor) => {
+                        editor.on("init", () => {
+                          const body = editor.getBody();
+                          body.setAttribute("dir", "ltr");
+                          body.style.direction = "ltr";
+                          body.style.textAlign = "left";
+                        });
+                      },
                       skin: resolvedTheme === "dark" ? "oxide-dark" : "oxide",
                       content_css: resolvedTheme === "dark" ? "dark" : "light",
                     }}

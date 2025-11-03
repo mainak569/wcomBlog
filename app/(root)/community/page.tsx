@@ -11,7 +11,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Community | Dev Overflow",
+  title: "Community | WcomBlog",
 };
 
 const Page = async ({
@@ -31,6 +31,7 @@ const Page = async ({
     take: 20,
     include: {
       answer: true,
+      _count: { select: { answer: true, questions: true } },
     },
     where: {
       name: {
@@ -41,7 +42,13 @@ const Page = async ({
       createdAt: searchParams.filter === "new_users" ? "desc" : "asc",
     },
   });
-  const result = await FetchUser(searchParams.filter, users);
+  // compute display points as fallback if stored points are 0
+  const usersWithComputed = users.map((u) => ({
+    ...u,
+    computedPoints: (u._count.questions * 5) + (u._count.answer * 10),
+  }));
+
+  const result = await FetchUser(searchParams.filter, usersWithComputed as any);
 
   return (
     <>
