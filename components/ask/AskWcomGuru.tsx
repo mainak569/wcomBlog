@@ -6,6 +6,7 @@ import { marked } from "marked";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import ParseHTML from "@/components/global/ParseHTML";
+import { CheckCheckIcon } from "lucide-react";
 
 const AskWcomGuru = () => {
   const [question, setQuestion] = useState("");
@@ -59,11 +60,9 @@ const AskWcomGuru = () => {
   
     (async () => {
       try {
-        const html = await marked.parse(answer, { breaks: true });
-        if (isMounted && typeof html === "string") {
-          setRenderedAnswer(html);
-        }
-      } catch (error) {
+        const html = await marked.parse(answer, { breaks: true }); // ALWAYS string
+        if (isMounted) setRenderedAnswer(html || "");
+      } catch {
         if (isMounted) setRenderedAnswer("");
       }
     })();
