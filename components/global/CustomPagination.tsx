@@ -31,7 +31,7 @@ const CustomPagination = ({
 
     setNext(currentPage + 1);
     setPrevious(currentPage > 1 ? currentPage - 1 : null);
-  }, [page, length]);
+  }, [page, length, NoOfPages]);
 
   const createUrl = (
     pageNumber: number | null | undefined,

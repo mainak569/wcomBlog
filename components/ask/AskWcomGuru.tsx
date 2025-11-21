@@ -60,8 +60,8 @@ const AskWcomGuru = () => {
   
     (async () => {
       try {
-        const html = await marked.parse(answer, { breaks: true });
-        if (isMounted) setRenderedAnswer(String(html) || "");
+        const html = await marked.parse(answer, { breaks: true }) as string;
+        if (isMounted) setRenderedAnswer(html || "");
       } catch {
         if (isMounted) setRenderedAnswer("");
       }
