@@ -50,19 +50,34 @@ const AskWcomGuru = () => {
   useEffect(() => {
     let isMounted = true;
 
-    const renderAnswer = async () => {
-      if (!answer) {
-        if (isMounted) setRenderedAnswer("");
-        return;
-      }
+    if (!answer) {
+      setRenderedAnswer("");
+      return () => {
+        isMounted = false;
+      };
+    }
 
-      const parsed = await marked.parse(answer, { breaks: true });
-      if (isMounted && typeof parsed === "string") {
-        setRenderedAnswer(parsed);
+    const result = marked.parse(answer, { breaks: true });
+
+    const applyResult = (html: string) => {
+      if (isMounted) {
+        setRenderedAnswer(html);
       }
     };
 
-    renderAnswer();
+    if (result instanceof Promise) {
+      result
+        .then((html) => {
+          if (typeof html === "string") {
+            applyResult(html);
+          }
+        })
+        .catch(() => {
+          if (isMounted) setRenderedAnswer("");
+        });
+    } else if (typeof result === "string") {
+      applyResult(result);
+    }
 
     return () => {
       isMounted = false;

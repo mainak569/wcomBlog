@@ -29,14 +29,9 @@ const CustomPagination = ({
   useEffect(() => {
     const currentPage = Number(page) ? Number(page) : 0;
 
-    if (currentPage > NoOfPages) {
-      setNext(currentPage + 1);
-    }
-
-    if (currentPage > 1) {
-      setPrevious(currentPage - 1);
-    }
-  }, [page, length, Next, Previous]);
+    setNext(currentPage + 1);
+    setPrevious(currentPage > 1 ? currentPage - 1 : null);
+  }, [page, NoOfPages]);
 
   const createUrl = (
     pageNumber: number | null | undefined,
