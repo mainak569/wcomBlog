@@ -49,40 +49,30 @@ const AskWcomGuru = () => {
 
   useEffect(() => {
     let isMounted = true;
-
+  
     if (!answer) {
       setRenderedAnswer("");
       return () => {
         isMounted = false;
       };
     }
-
-    const result = marked.parse(answer, { breaks: true });
-
-    const applyResult = (html: string) => {
-      if (isMounted) {
-        setRenderedAnswer(html);
+  
+    (async () => {
+      try {
+        const html = await marked.parse(answer, { breaks: true });
+        if (isMounted && typeof html === "string") {
+          setRenderedAnswer(html);
+        }
+      } catch (error) {
+        if (isMounted) setRenderedAnswer("");
       }
-    };
-
-    if (result instanceof Promise) {
-      result
-        .then((html) => {
-          if (typeof html === "string") {
-            applyResult(html);
-          }
-        })
-        .catch(() => {
-          if (isMounted) setRenderedAnswer("");
-        });
-    } else if (typeof result === "string") {
-      applyResult(result);
-    }
-
+    })();
+  
     return () => {
       isMounted = false;
     };
   }, [answer]);
+  
 
   return (
     <div className="flex flex-col gap-6">
