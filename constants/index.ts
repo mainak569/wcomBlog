@@ -36,4 +36,10 @@ export const sidebarLinks = [
     route: "/askQuestion",
     label: "Ask a question",
   },
+  {
+    icon: BsPatchQuestion,
+    active: BsPatchQuestionFill,
+    route: "/ask-wcomGuru",
+    label: "Ask WcomGuru",
+  },
 ];

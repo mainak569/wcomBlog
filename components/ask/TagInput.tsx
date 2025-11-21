@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 // @ts-ignore
 import { WithContext as ReactTags } from "react-tag-input";
 // @ts-ignore
@@ -25,6 +25,13 @@ const suggestions = Tags.map((tag) => {
 
 const delimiters = [KeyCodes.comma, KeyCodes.enter];
 
+const normalizeTags = (input?: TagProps[]) =>
+  (input ?? []).map((t) => ({
+    id: t.id,
+    text: t.text,
+    className: t.className ?? "",
+  }));
+
 const TagInput = ({
   disabled,
   onChange,
@@ -34,13 +41,11 @@ const TagInput = ({
   onChange: (value: TagProps[]) => void;
   questionTags: TagProps[];
 }) => {
-  const [tags, setTags] = useState<TagProps[]>(
-    questionTags ? questionTags.map((t) => ({ ...t, className: t.className ?? "" })) : []
-  );
+  const sanitizedTags = useMemo(() => normalizeTags(questionTags), [questionTags]);
 
   const handleDelete = (i: number) => {
     if (disabled) return;
-    setTags(tags.filter((tag, index) => index !== i));
+    onChange(sanitizedTags.filter((_, index) => index !== i));
   };
 
   const handleAddition = (tag: any) => {
@@ -50,28 +55,22 @@ const TagInput = ({
       text: tag.text ?? tag?.name ?? "",
       className: tag.className ?? "",
     };
-    setTags([...tags, normalized]);
+    onChange([...sanitizedTags, normalized]);
   };
 
   const handleDrag = (tag: TagProp, currPos: number, newPos: number) => {
     if (disabled) return;
-    const newTags = tags.slice();
+    const newTags = sanitizedTags.slice();
 
     newTags.splice(currPos, 1);
     newTags.splice(newPos, 0, tag);
 
-    // re-render
-    setTags(newTags);
+    onChange(newTags);
   };
-
-  useEffect(() => {
-    onChange(tags);
-    // console.log(tags);
-  }, [tags, onChange]);
 
   return (
     <ReactTags
-      tags={tags as any}
+      tags={sanitizedTags as any}
       suggestions={suggestions}
       delimiters={delimiters}
       handleDelete={handleDelete}
