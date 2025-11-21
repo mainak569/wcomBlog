@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { marked } from "marked";
 
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ const AskWcomGuru = () => {
   const [answer, setAnswer] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [renderedAnswer, setRenderedAnswer] = useState("");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -46,9 +47,26 @@ const AskWcomGuru = () => {
     }
   };
 
-  const renderedAnswer = useMemo(() => {
-    if (!answer) return "";
-    return marked.parse(answer, { breaks: true });
+  useEffect(() => {
+    let isMounted = true;
+
+    const renderAnswer = async () => {
+      if (!answer) {
+        if (isMounted) setRenderedAnswer("");
+        return;
+      }
+
+      const parsed = await marked.parse(answer, { breaks: true });
+      if (isMounted && typeof parsed === "string") {
+        setRenderedAnswer(parsed);
+      }
+    };
+
+    renderAnswer();
+
+    return () => {
+      isMounted = false;
+    };
   }, [answer]);
 
   return (
